@@ -1,0 +1,37 @@
+package utils
+
+import (
+	"math/rand"
+	"time"
+)
+
+const letterBytes = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const (
+	letterIdxBits = 6                      // 6 bits to represent a letter index
+	letterIdxMask = 1 << letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+	letterIdxMax  = 63 / letterIdxBits     // # of letter indices fitting in 63 bits
+)
+
+func GetRandString(n int) string {
+	b := make([]byte, n)
+	rand.Seed(time.Now().UnixNano())
+	// A rand.Int63() generates 63 random bits, enough for letterIdxMax letters!
+	for i, cache, remain := n-1, rand.Int63(), letterIdxMax; i >= 0; {
+		if remain == 0 {
+			cache, remain = rand.Int63(), letterIdxMax
+		}
+		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
+			b[i] = letterBytes[idx]
+			i--
+		}
+		cache >>= letterIdxBits
+		remain--
+	}
+
+	return string(b)
+}
+
+func Random(min, max int) int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(max - min) + min
+}
